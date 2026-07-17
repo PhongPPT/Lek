@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoPOS Mobile - ລະບົບຂາຍເລກພ້ອມລະບົບ Login</title>
+    <title>LottoPOS Mobile - ລະບົບຂາຍເລກເທິງມືຖື</title>
     <!-- Tailwind CSS for Responsive Mobile Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for Lao Language -->
@@ -15,6 +15,7 @@
             font-family: 'Noto Sans Lao', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        /* ຊ່ວຍໃຫ້ scroll ບໍ່ຕິດຂັດເທິງ iOS */
         .scroll-smooth {
             -webkit-overflow-scrolling: touch;
         }
@@ -22,82 +23,29 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col pb-20 select-none">
 
-    <!-- ==================================== -->
-    <!-- 1. LOGIN SCREEN (ໜ້າ Login) -->
-    <!-- ==================================== -->
-    <div id="view-login" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col justify-center px-6">
-        <div class="bg-white rounded-3xl p-6 shadow-2xl space-y-6 max-w-md mx-auto w-full">
-            <div class="text-center space-y-2">
-                <span class="text-5xl block">🎰</span>
-                <h2 class="text-2xl font-black text-slate-850">ເຂົ້າສູ່ລະບົບຂາຍເລກ</h2>
-                <p class="text-xs text-slate-400">ກະລຸນາປ້ອນຂໍ້ມູນຜູ້ໃຊ້ເພື່ອດຳເນີນການ</p>
-            </div>
-
-            <!-- Form Inputs -->
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1">ຊື່ຜູ້ໃຊ້ (Username)</label>
-                    <input type="text" id="login-username" placeholder="ປ້ອນຊື່ຜູ້ໃຊ້..." autocomplete="off"
-                           class="w-full border border-slate-200 rounded-xl p-3.5 text-slate-800 font-bold focus:outline-none focus:border-indigo-500 bg-slate-50">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1">ລະຫັດຜ່ານ (Password)</label>
-                    <input type="password" id="login-password" placeholder="ປ້ອນລະຫັດຜ່ານ..."
-                           class="w-full border border-slate-200 rounded-xl p-3.5 text-slate-800 font-bold focus:outline-none focus:border-indigo-500 bg-slate-50">
-                </div>
-            </div>
-
-            <!-- Error message area -->
-            <div id="login-error" class="text-xs text-rose-500 font-bold text-center hidden">
-                ❌ ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!
-            </div>
-
-            <!-- Actions buttons -->
-            <div class="space-y-3">
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all text-sm">
-                    🔑 ເຂົ້າສູ່ລະບົບ (Admin)
-                </button>
-                <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-slate-200"></div>
-                    <span class="flex-shrink mx-4 text-slate-400 text-xs">ຫຼື</span>
-                    <div class="flex-grow border-t border-slate-200"></div>
-                </div>
-                <button onclick="handleVisitorLogin()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-all text-xs">
-                    👤 ເຂົ້າໃຊ້ແບບ Visitor (ຂາຍຢ່າງດຽວ)
-                </button>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ==================================== -->
-    <!-- MAIN APPLICATION (ຫຼັງຈາກເຂົ້າສູ່ລະບົບແລ້ວ) -->
-    <!-- ==================================== -->
-
     <!-- Header Navigation (ຄົງທີ່ດ້ານເທິງ) -->
     <header class="bg-indigo-600 text-white shadow-sm px-4 py-3 sticky top-0 z-50 flex justify-between items-center">
         <div class="flex items-center space-x-2">
             <span class="text-xl">🎰</span>
             <h1 class="text-base font-bold tracking-wide">LottoMobile v1</h1>
         </div>
-        <div class="flex items-center space-x-3">
-            <span id="user-badge" class="bg-indigo-700 text-[10px] px-2.5 py-1 rounded-full font-semibold">...</span>
-            <button onclick="handleLogout()" class="text-xs text-indigo-200 hover:text-white underline">ອອກລະບົບ</button>
+        <div class="flex items-center space-x-2">
+            <span class="bg-indigo-700 text-[10px] px-2.5 py-1 rounded-full font-semibold">Phongsavath</span>
         </div>
     </header>
 
     <!-- ------------------------------------ -->
-    <!-- TAB: ໜ້າຂາຍ (POS VIEW) -->
+    <!-- 1. TAB: ໜ້າຂາຍ (POS VIEW) -->
     <!-- ------------------------------------ -->
     <main id="view-pos" class="flex-1 p-4 space-y-4">
         
-        <!-- Live Quota Summary Alerts -->
+        <!-- Live Quota Summary Alerts (ແຖບເຕືອນດ່ວນ) -->
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs text-amber-800">
             <div class="flex items-center space-x-2">
                 <span>🔔</span>
                 <span><strong>ເລກເຕັມ/ອັ້ນມື້ນີ້:</strong> 99 (ອັ້ນ), 25 (ເຕັມ)</span>
             </div>
-            <button id="alert-view-all-btn" onclick="switchTab('report')" class="underline font-bold text-indigo-600">ເບິ່ງທັງໝົດ</button>
+            <button onclick="switchTab('report')" class="underline font-bold text-indigo-600">ເບິ່ງທັງໝົດ</button>
         </div>
 
         <!-- Quick Form Section -->
@@ -113,7 +61,7 @@
                 </button>
             </div>
 
-            <!-- Number and Amount Fields -->
+            <!-- Number and Amount Fields (ວາງຄຽງຄູ່ກັນໃຫ້ປ້ອນງ່າຍ) -->
             <div class="grid grid-cols-12 gap-3">
                 <div class="col-span-5">
                     <label class="block text-slate-400 text-[10px] font-bold mb-1">ຕົວເລກ</label>
@@ -151,6 +99,7 @@
 
             <!-- Scrollable list in Mobile -->
             <div class="max-h-[220px] overflow-y-auto scroll-smooth divide-y divide-slate-100" id="bill-list-container">
+                <!-- Empty state placeholder -->
                 <div id="empty-row" class="py-8 text-center text-slate-400 text-xs">
                     <span class="text-2xl block mb-1">📄</span>
                     ບໍ່ທັນມີລາຍການເທື່ອ, ລອງປ້ອນເລກຂ້າງເທິງ
@@ -192,7 +141,7 @@
             </div>
         </div>
 
-        <!-- Sales detail table -->
+        <!-- Sales detail table (Mobile Friendly) -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
             <h3 class="font-bold text-sm text-slate-800 mb-3 flex justify-between">
                 <span>📊 ຕົວເລກຂາຍດີມື້ນີ້</span>
@@ -216,7 +165,7 @@
             </div>
         </div>
 
-        <!-- Limits Detail table -->
+        <!-- Limits Detail table (Mobile Friendly) -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
             <h3 class="font-bold text-sm text-slate-800 mb-3">
                 <span>🚫 ສະຖານະເລກອັ້ນ & ເລກເຕັມ</span>
@@ -279,7 +228,7 @@
     </main>
 
     <!-- ------------------------------------ -->
-    <!-- BOTTOM NAVIGATION BAR (ແຖບເມນູລຸ່ມ) -->
+    <!-- BOTTOM NAVIGATION BAR (ແຖບເມນູລຸ່ມຄົງທີ່) -->
     <!-- ------------------------------------ -->
     <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 h-16 shadow-lg z-50 flex justify-around items-center">
         <!-- ປຸ່ມໜ້າຂາຍ -->
@@ -287,12 +236,12 @@
             <span class="text-xl">🛒</span>
             <span class="text-[10px] font-bold mt-0.5">ໜ້າຂາຍ (POS)</span>
         </button>
-        <!-- ປຸ່ມໜ້າລາຍງານ (Admin Only) -->
+        <!-- ປຸ່ມໜ້າລາຍງານ -->
         <button id="nav-report" onclick="switchTab('report')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
             <span class="text-xl">📊</span>
             <span class="text-[10px] font-bold mt-0.5">ລາຍງານ</span>
         </button>
-        <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ (Admin Only) -->
+        <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ -->
         <button id="nav-config" onclick="switchTab('config')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
             <span class="text-xl">⚙️</span>
             <span class="text-[10px] font-bold mt-0.5">ຕັ້ງຄ່າເລກອັ້ນ</span>
@@ -300,16 +249,16 @@
     </nav>
 
     <!-- ------------------------------------ -->
-    <!-- JAVASCRIPT: APPLICATION LOGIC -->
+    <!-- JAVASCRIPT: MOBILE APP LOGIC -->
     <!-- ------------------------------------ -->
     <script>
-        // --- AUTH & STATE MANAGEMENT ---
-        let currentUserRole = null; // 'admin' ຫຼື 'visitor'
-        let currentType = '2'; 
+        // --- DATA STATE ---
+        let currentType = '2'; // 2 = 2-digit, 3 = 3-digit
         let billItems = [];
         let systemSalesToday = 0;
         let accumulatedSales = {}; 
 
+        // Initial Rules: 99 Block 100%, 25 Limit 50,000 ກີບ
         let limitRules = [
             { number: "99", maxAmount: 0, currentAmount: 0 },
             { number: "25", maxAmount: 50000, currentAmount: 10000 }
@@ -319,78 +268,13 @@
         const amountInput = document.getElementById('input-amount');
         const reverseCheckbox = document.getElementById('check-reverse');
 
-        // --- LOGIN LOGIC ---
-        function handleLogin() {
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-            const errorEl = document.getElementById('login-error');
-
-            if (u === 'admin' && p === '12345') {
-                currentUserRole = 'admin';
-                errorEl.classList.add('hidden');
-                setupUIAccess();
-                document.getElementById('view-login').classList.add('hidden'); // ປິດໜ້າ Login
-                switchTab('pos');
-            } else {
-                errorEl.classList.remove('hidden');
-            }
-        }
-
-        function handleVisitorLogin() {
-            currentUserRole = 'visitor';
-            document.getElementById('login-error').classList.add('hidden');
-            setupUIAccess();
-            document.getElementById('view-login').classList.add('hidden'); // ປິດໜ້າ Login
-            switchTab('pos');
-        }
-
-        function handleLogout() {
-            currentUserRole = null;
-            document.getElementById('login-username').value = "";
-            document.getElementById('login-password').value = "";
-            document.getElementById('view-login').classList.remove('hidden'); // ເປີດໜ້າ Login ຄືນ
-        }
-
-        // --- ROLE ACCESSIBILITY CONTROL ---
-        function setupUIAccess() {
-            const badge = document.getElementById('user-badge');
-            const navReportBtn = document.getElementById('nav-report');
-            const navConfigBtn = document.getElementById('nav-config');
-            const alertViewAllBtn = document.getElementById('alert-view-all-btn');
-
-            if (currentUserRole === 'admin') {
-                badge.innerText = "ສິດ: Admin";
-                badge.className = "bg-emerald-600 text-[10px] px-2.5 py-1 rounded-full font-semibold";
-                
-                // ສະແດງເມນູທັງໝົດສຳລັບ Admin
-                navReportBtn.style.display = 'flex';
-                navConfigBtn.style.display = 'flex';
-                alertViewAllBtn.style.display = 'inline-block';
-            } else {
-                badge.innerText = "ສິດ: Visitor";
-                badge.className = "bg-slate-500 text-[10px] px-2.5 py-1 rounded-full font-semibold";
-
-                // ເຊື່ອງເມນູສະເພາະ Admin ບໍ່ໃຫ້ Visitor ເຫັນ
-                navReportBtn.style.display = 'none';
-                navConfigBtn.style.display = 'none';
-                alertViewAllBtn.style.display = 'none';
-            }
-
-            // ລ້າງຂໍ້ມູນເກົ່າໃນຟອມ
-            numInput.value = "";
-            amountInput.value = "";
-            billItems = [];
-            renderBillList();
-        }
+        window.onload = () => {
+            numInput.focus();
+            renderConfigTab();
+        };
 
         // --- TAB NAVIGATION (BOTTOM BAR) ---
         function switchTab(tab) {
-            // ປ້ອງກັນບໍ່ໃຫ້ Visitor ກົດເຂົ້າໜ້າລາຍງານ ແລະ ຕັ້ງຄ່າຜ່ານວິທີອື່ນໆ
-            if (currentUserRole !== 'admin' && (tab === 'report' || tab === 'config')) {
-                alert('⚠️ ສິດທິການເຂົ້າເຖິງສະເພາະ Admin ເທົ່ານັ້ນ!');
-                return;
-            }
-
             const views = {
                 pos: document.getElementById('view-pos'),
                 report: document.getElementById('view-report'),
@@ -402,6 +286,7 @@
                 config: document.getElementById('nav-config')
             };
 
+            // Hide all, show selected
             Object.keys(views).forEach(key => {
                 if (key === tab) {
                     views[key].classList.remove('hidden');
@@ -412,6 +297,7 @@
                 }
             });
 
+            // Trigger specific renders
             if (tab === 'pos') {
                 numInput.focus();
             } else if (tab === 'report') {
@@ -477,6 +363,7 @@
                 pushToBill(num, amt);
             }
 
+            // Reset
             numInput.value = "";
             amountInput.value = "";
             numInput.focus();
@@ -507,6 +394,7 @@
                 amount
             });
 
+            // Reserve quota
             const rule = limitRules.find(r => r.number === number);
             if (rule) rule.currentAmount += amount;
         }
@@ -534,6 +422,7 @@
             const container = document.getElementById('bill-list-container');
             const empty = document.getElementById('empty-row');
             
+            // Clear past dynamic items
             const currentItems = container.querySelectorAll('.bill-item-row');
             currentItems.forEach(el => el.remove());
 
@@ -646,8 +535,10 @@
 
         // --- RENDER REPORTS TAB ---
         function renderReportTab() {
+            // 1. ຍອດລວມມື້ນີ້
             document.getElementById('report-today-sales').innerText = systemSalesToday.toLocaleString() + " LAK";
 
+            // 2. ຕາຕະລາງເລກຂາຍດີ
             const salesTbody = document.getElementById('report-sales-tbody');
             const empty = document.getElementById('report-empty-row');
             salesTbody.innerHTML = "";
@@ -668,6 +559,7 @@
                 });
             }
 
+            // 3. ຕາຕະລາງຕິດຕາມຄວາມສ່ຽງ (ເລກອັ້ນ/ເຕັມ)
             const limitTbody = document.getElementById('report-limit-tbody');
             limitTbody.innerHTML = "";
 
