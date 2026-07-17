@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoPOS Mobile - ລະບົບຂາຍເລກເທິງມືຖື (ມີລະບົບ Login)</title>
+    <title>LottoPOS Mobile - ລະບົບຂາຍເລກເທິງມືຖື (ປັບປຸງລະບົບສິດທິ)</title>
     <!-- Tailwind CSS for Responsive Mobile Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for Lao Language -->
@@ -24,7 +24,7 @@
 <body class="bg-slate-50 min-h-screen flex flex-col pb-20 select-none">
 
     <!-- ------------------------------------ -->
-    <!-- 0. SCREEN: ໜ້າຈໍ LOGIN (ສະແດງທຳອິດ) -->
+    <!-- 0. SCREEN: ໜ້າຈໍ LOGIN -->
     <!-- ------------------------------------ -->
     <div id="screen-login" class="fixed inset-0 bg-slate-100 z-[999] flex flex-col justify-center items-center px-6">
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 w-full max-w-sm space-y-6">
@@ -54,7 +54,7 @@
                 </button>
             </div>
 
-            <!-- ບອກໃບ້ລະຫັດຜ່ານ (ສຳລັບເດໂມ) -->
+            <!-- ບອກໃບ້ລະຫັດຜ່ານ -->
             <div class="bg-indigo-50 rounded-xl p-3 text-[10px] text-indigo-700 space-y-1 font-semibold">
                 <p>💡 ບັນຊີທົດລອງ:</p>
                 <p>• Admin: admin / 12345 (ເຂົ້າໄດ້ທຸກໜ້າ)</p>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- ------------------------------------ -->
-    <!-- MAIN APPLICATION CONTAINER (ຊ້ອນໄວ້ກ່ອນ) -->
+    <!-- MAIN APPLICATION CONTAINER -->
     <!-- ------------------------------------ -->
     <div id="app-container" class="hidden flex flex-col min-h-screen">
         
@@ -84,7 +84,7 @@
         <!-- 1. TAB: ໜ້າຂາຍ (POS VIEW) -->
         <!-- ------------------------------------ -->
         <main id="view-pos" class="flex-1 p-4 space-y-4">
-            <!-- Live Quota Summary Alerts (ແຖບເຕືອນດ່ວນ) -->
+            <!-- Live Quota Summary Alerts -->
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs text-amber-800">
                 <div class="flex items-center space-x-2">
                     <span>🔔</span>
@@ -259,7 +259,7 @@
         </main>
 
         <!-- ------------------------------------ -->
-        <!-- BOTTOM NAVIGATION BAR (ແຖບເມນູລຸ່ມ) -->
+        <!-- BOTTOM NAVIGATION BAR -->
         <!-- ------------------------------------ -->
         <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 h-16 shadow-lg z-50 flex justify-around items-center">
             <!-- ປຸ່ມໜ້າຂາຍ -->
@@ -267,12 +267,12 @@
                 <span class="text-xl">🛒</span>
                 <span class="text-[10px] font-bold mt-0.5">ໜ້າຂາຍ (POS)</span>
             </button>
-            <!-- ປຸ່ມໜ້າລາຍງານ (Admin Only) -->
+            <!-- ປຸ່ມໜ້າລາຍງານ -->
             <button id="nav-report" onclick="switchTab('report')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
                 <span class="text-xl">📊</span>
                 <span class="text-[10px] font-bold mt-0.5">ລາຍງານ</span>
             </button>
-            <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ (Admin Only) -->
+            <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ -->
             <button id="nav-config" onclick="switchTab('config')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
                 <span class="text-xl">⚙️</span>
                 <span class="text-[10px] font-bold mt-0.5">ຕັ້ງຄ່າເລກອັ້ນ</span>
@@ -299,6 +299,11 @@
         const numInput = document.getElementById('input-number');
         const amountInput = document.getElementById('input-amount');
         const reverseCheckbox = document.getElementById('check-reverse');
+
+        window.onload = () => {
+            numInput.focus();
+            renderConfigTab();
+        };
 
         // --- ລະບົບ LOGIN & LOGOUT ---
         function handleLogin() {
@@ -334,26 +339,32 @@
             currentUserRole = '';
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
+            
+            // [ຈຸດແກ້ໄຂທີ 2]: ຄືນຄ່າການສະແດງຜົນປຸ່ມກ່ອນກັບໄປໜ້າ Login ເພື່ອບໍ່ໃຫ້ຕິດ Bug ປຸ່ມຫາຍ
+            document.getElementById('nav-report').style.display = 'flex';
+            document.getElementById('nav-config').style.display = 'flex';
+            document.getElementById('pos-alert-link').style.display = 'inline';
+
             document.getElementById('screen-login').classList.remove('hidden'); // ເປີດໜ້າ login ຄືນ
             document.getElementById('app-container').classList.add('hidden'); // ຊ້ອນແອັບ
         }
 
-        // ຈັດການສິດທິການເຂົ້າເຖິງຂອງແຕ່ລະ Role
+        // [ຈຸດແກ້ໄຂທີ 1]: ຈັດການສິດທິການເຂົ້າເຖິງ ໂດຍບັງຄັບຊ່ອນປຸ່ມເມນູລຸ່ມຢ່າງເດັດຂາດ
         function applyRolePermissions() {
             const navReport = document.getElementById('nav-report');
             const navConfig = document.getElementById('nav-config');
             const alertLink = document.getElementById('pos-alert-link');
 
             if (currentUserRole === 'user') {
-                // ຖ້າເປັນ user ປົກກະຕິ: ຊ້ອນປຸ່ມລາຍງານ ແລະ ປຸ່ມຕັ້ງຄ່າເລກອັ້ນ
-                navReport.classList.add('hidden');
-                navConfig.classList.add('hidden');
-                alertLink.classList.add('hidden'); // ບໍ່ໃຫ້ກົດໄປເບິ່ງລາຍງານເລກອັ້ນໄດ້
+                // ຖ້າເປັນ user ປົກກະຕິ: ຊ່ອນປຸ່ມເມນູລຸ່ມ ແລະ Link ດ່ວນ ບໍ່ໃຫ້ກົດໄດ້ເລີຍ
+                navReport.style.display = 'none';
+                navConfig.style.display = 'none';
+                alertLink.style.display = 'none'; 
             } else {
-                // ຖ້າເປັນ admin: ສະແດງທຸກປຸ່ມ
-                navReport.classList.remove('hidden');
-                navConfig.classList.remove('hidden');
-                alertLink.classList.remove('hidden');
+                // ຖ້າເປັນ admin: ສະແດງທຸກປຸ່ມເປັນປົກກະຕິ
+                navReport.style.display = 'flex';
+                navConfig.style.display = 'flex';
+                alertLink.style.display = 'inline';
             }
         }
 
@@ -366,7 +377,7 @@
 
         // --- TAB NAVIGATION (BOTTOM BAR) ---
         function switchTab(tab) {
-            // ກັນໄວ້ອີກຊັ້ນ: ຖ້າ user ພະຍາຍາມກົດໄປໜ້າອື່ນທີ່ບໍ່ແມ່ນ pos ຜ່ານ console
+            // [ຈຸດແກ້ໄຂທີ 3]: ດັກຢ່າງເຂັ້ມງວດ ຖ້າເປັນ user ແລ້ວພະຍາຍາມໄປໜ້າອື່ນ ໃຫ້ດີດກັບມາໜ້າ pos ທັນທີ
             if (currentUserRole === 'user' && tab !== 'pos') {
                 alert('🚫 ທ່ານບໍ່ມີສິດເຂົ້າເຖິງໜ້ານີ້!');
                 return;
