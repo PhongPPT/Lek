@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoPOS Mobile - ລະບົບຂາຍເລກພ້ອມລະບົບ Login</title>
+    <title>LottoPOS Mobile - ລະບົບຂາຍເລກເທິງມືຖື (ມີລະບົບ Login)</title>
     <!-- Tailwind CSS for Responsive Mobile Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for Lao Language -->
@@ -15,6 +15,7 @@
             font-family: 'Noto Sans Lao', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        /* ຊ່ວຍໃຫ້ scroll ບໍ່ຕິດຂັດເທິງ iOS */
         .scroll-smooth {
             -webkit-overflow-scrolling: touch;
         }
@@ -22,290 +23,270 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col pb-20 select-none">
 
-    <!-- ==================================== -->
-    <!-- 1. LOGIN SCREEN (ໜ້າ Login) -->
-    <!-- ==================================== -->
-    <div id="view-login" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col justify-center px-6">
-        <div class="bg-white rounded-3xl p-6 shadow-2xl space-y-6 max-w-md mx-auto w-full">
+    <!-- ------------------------------------ -->
+    <!-- 0. SCREEN: ໜ້າຈໍ LOGIN (ສະແດງທຳອິດ) -->
+    <!-- ------------------------------------ -->
+    <div id="screen-login" class="fixed inset-0 bg-slate-100 z-[999] flex flex-col justify-center items-center px-6">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 w-full max-w-sm space-y-6">
             <div class="text-center space-y-2">
-                <span class="text-5xl block">🎰</span>
-                <h2 class="text-2xl font-black text-slate-850">ເຂົ້າສູ່ລະບົບຂາຍເລກ</h2>
-                <p class="text-xs text-slate-400">ກະລຸນາປ້ອນຂໍ້ມູນຜູ້ໃຊ້ເພື່ອດຳເນີນການ</p>
+                <span class="text-5xl block">🔐</span>
+                <h2 class="text-xl font-bold text-slate-800">ເຂົ້າສູ່ລະບົບ LottoMobile</h2>
+                <p class="text-xs text-slate-400">ກະລຸນາປ້ອນບັນຊີຜູ້ໃຊ້ຂອງທ່ານ</p>
             </div>
 
-            <!-- Form Inputs -->
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1">ຊື່ຜູ້ໃຊ້ (Username)</label>
-                    <input type="text" id="login-username" placeholder="ປ້ອນຊື່ຜູ້ໃຊ້..." autocomplete="off"
-                           class="w-full border border-slate-200 rounded-xl p-3.5 text-slate-800 font-bold focus:outline-none focus:border-indigo-500 bg-slate-50">
+                    <input type="text" id="login-username" placeholder="admin ຫຼື user" autocomplete="off"
+                           class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:border-indigo-500 focus:outline-none bg-slate-50 font-semibold text-slate-800">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1">ລະຫັດຜ່ານ (Password)</label>
-                    <input type="password" id="login-password" placeholder="ປ້ອນລະຫັດຜ່ານ..."
-                           class="w-full border border-slate-200 rounded-xl p-3.5 text-slate-800 font-bold focus:outline-none focus:border-indigo-500 bg-slate-50">
+                    <input type="password" id="login-password" placeholder="•••••"
+                           class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:border-indigo-500 focus:outline-none bg-slate-50 font-semibold text-slate-800 tracking-widest">
                 </div>
+                
+                <!-- Error Message Alert -->
+                <p id="login-error" class="text-xs text-rose-500 font-bold text-center hidden">⚠️ ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!</p>
+
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all">
+                    ເຂົ້າສູ່ລະບົບ
+                </button>
             </div>
 
-            <!-- Error message area -->
-            <div id="login-error" class="text-xs text-rose-500 font-bold text-center hidden">
-                ❌ ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!
-            </div>
-
-            <!-- Actions buttons -->
-            <div class="space-y-3">
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all text-sm">
-                    🔑 ເຂົ້າສູ່ລະບົບ (Admin)
-                </button>
-                <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-slate-200"></div>
-                    <span class="flex-shrink mx-4 text-slate-400 text-xs">ຫຼື</span>
-                    <div class="flex-grow border-t border-slate-200"></div>
-                </div>
-                <button onclick="handleVisitorLogin()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-all text-xs">
-                    👤 ເຂົ້າໃຊ້ແບບ Visitor (ຂາຍຢ່າງດຽວ)
-                </button>
+            <!-- ບອກໃບ້ລະຫັດຜ່ານ (ສຳລັບເດໂມ) -->
+            <div class="bg-indigo-50 rounded-xl p-3 text-[10px] text-indigo-700 space-y-1 font-semibold">
+                <p>💡 ບັນຊີທົດລອງ:</p>
+                <p>• Admin: admin / 12345 (ເຂົ້າໄດ້ທຸກໜ້າ)</p>
+                <p>• User: user / 12345 (ເຂົ້າໄດ້ແຕ່ໜ້າ POS)</p>
             </div>
         </div>
     </div>
 
-
-    <!-- ==================================== -->
-    <!-- MAIN APPLICATION (ຫຼັງຈາກເຂົ້າສູ່ລະບົບແລ້ວ) -->
-    <!-- ==================================== -->
-
-    <!-- Header Navigation (ຄົງທີ່ດ້ານເທິງ) -->
-    <header class="bg-indigo-600 text-white shadow-sm px-4 py-3 sticky top-0 z-50 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <span class="text-xl">🎰</span>
-            <h1 class="text-base font-bold tracking-wide">LottoMobile v1</h1>
-        </div>
-        <div class="flex items-center space-x-3">
-            <span id="user-badge" class="bg-indigo-700 text-[10px] px-2.5 py-1 rounded-full font-semibold">...</span>
-            <button onclick="handleLogout()" class="text-xs text-indigo-200 hover:text-white underline">ອອກລະບົບ</button>
-        </div>
-    </header>
-
     <!-- ------------------------------------ -->
-    <!-- TAB: ໜ້າຂາຍ (POS VIEW) -->
+    <!-- MAIN APPLICATION CONTAINER (ຊ້ອນໄວ້ກ່ອນ) -->
     <!-- ------------------------------------ -->
-    <main id="view-pos" class="flex-1 p-4 space-y-4">
+    <div id="app-container" class="hidden flex flex-col min-h-screen">
         
-        <!-- Live Quota Summary Alerts -->
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs text-amber-800">
+        <!-- Header Navigation (ຄົງທີ່ດ້ານເທິງ) -->
+        <header class="bg-indigo-600 text-white shadow-sm px-4 py-3 sticky top-0 z-50 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <span>🔔</span>
-                <span><strong>ເລກເຕັມ/ອັ້ນມື້ນີ້:</strong> 99 (ອັ້ນ), 25 (ເຕັມ)</span>
+                <span class="text-xl">🎰</span>
+                <h1 class="text-base font-bold tracking-wide">LottoMobile v1</h1>
             </div>
-            <button id="alert-view-all-btn" onclick="switchTab('report')" class="underline font-bold text-indigo-600">ເບິ່ງທັງໝົດ</button>
-        </div>
-
-        <!-- Quick Form Section -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-4">
-            
-            <!-- Type Selection -->
-            <div class="grid grid-cols-2 gap-2">
-                <button id="btn-type-2" onclick="toggleType('2')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm transition-all">
-                    ເລກ 2 ໂຕ (00-99)
-                </button>
-                <button id="btn-type-3" onclick="toggleType('3')" class="bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-sm transition-all">
-                    ເລກ 3 ໂຕ (000-999)
-                </button>
+            <div class="flex items-center space-x-2">
+                <span id="display-username" class="bg-indigo-700 text-[10px] px-2.5 py-1 rounded-full font-semibold">Phongsavath</span>
+                <button onclick="handleLogout()" class="text-xs bg-rose-500 hover:bg-rose-600 px-2 py-1 rounded-lg font-bold">ອອກ</button>
             </div>
+        </header>
 
-            <!-- Number and Amount Fields -->
-            <div class="grid grid-cols-12 gap-3">
-                <div class="col-span-5">
-                    <label class="block text-slate-400 text-[10px] font-bold mb-1">ຕົວເລກ</label>
-                    <input type="text" id="input-number" placeholder="00" maxlength="2" pattern="[0-9]*" inputmode="numeric" autocomplete="off"
-                           class="w-full text-center text-3xl font-extrabold text-indigo-600 border border-slate-200 rounded-xl py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all bg-slate-50">
+        <!-- ------------------------------------ -->
+        <!-- 1. TAB: ໜ້າຂາຍ (POS VIEW) -->
+        <!-- ------------------------------------ -->
+        <main id="view-pos" class="flex-1 p-4 space-y-4">
+            <!-- Live Quota Summary Alerts (ແຖບເຕືອນດ່ວນ) -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs text-amber-800">
+                <div class="flex items-center space-x-2">
+                    <span>🔔</span>
+                    <span><strong>ເລກເຕັມ/ອັ້ນມື້ນີ້:</strong> 99 (ອັ້ນ), 25 (ເຕັມ)</span>
                 </div>
-                <div class="col-span-7">
-                    <label class="block text-slate-400 text-[10px] font-bold mb-1">ຈຳນວນເງິນ (ກີບ)</label>
-                    <input type="number" id="input-amount" placeholder="10,000" pattern="[0-9]*" inputmode="numeric"
-                           class="w-full text-center text-2xl font-extrabold text-slate-800 border border-slate-200 rounded-xl py-3.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all bg-slate-50">
+                <button id="pos-alert-link" onclick="switchTab('report')" class="underline font-bold text-indigo-600">ເບິ່ງທັງໝົດ</button>
+            </div>
+
+            <!-- Quick Form Section -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-4">
+                <!-- Type Selection -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-type-2" onclick="toggleType('2')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm transition-all">
+                        ເລກ 2 ໂຕ (00-99)
+                    </button>
+                    <button id="btn-type-3" onclick="toggleType('3')" class="bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-sm transition-all">
+                        ເລກ 3 ໂຕ (000-999)
+                    </button>
+                </div>
+
+                <!-- Number and Amount Fields -->
+                <div class="grid grid-cols-12 gap-3">
+                    <div class="col-span-5">
+                        <label class="block text-slate-400 text-[10px] font-bold mb-1">ຕົວເລກ</label>
+                        <input type="text" id="input-number" placeholder="00" maxlength="2" pattern="[0-9]*" inputmode="numeric" autocomplete="off"
+                               class="w-full text-center text-3xl font-extrabold text-indigo-600 border border-slate-200 rounded-xl py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all bg-slate-50">
+                    </div>
+                    <div class="col-span-7">
+                        <label class="block text-slate-400 text-[10px] font-bold mb-1">ຈຳນວນເງິນ (ກີບ)</label>
+                        <input type="number" id="input-amount" placeholder="10,000" pattern="[0-9]*" inputmode="numeric"
+                               class="w-full text-center text-2xl font-extrabold text-slate-800 border border-slate-200 rounded-xl py-3.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all bg-slate-50">
+                    </div>
+                </div>
+
+                <!-- Toggle Auto-Reverse -->
+                <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl text-xs">
+                    <span class="font-semibold text-slate-500">🔄 ຕ້ອງການ "ກັບເລກ" (Auto Reverse)</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="check-reverse" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <!-- Add Button -->
+                <button onclick="addItem()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center space-x-2 text-base">
+                    <span>➕ ເພີ່ມລົງບິນ</span>
+                </button>
+            </div>
+
+            <!-- Current Bill list -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm text-slate-800">ລາຍການໃນບິນປັດຈຸບັນ</h3>
+                    <span id="bill-count" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">0 ລາຍການ</span>
+                </div>
+
+                <!-- Scrollable list in Mobile -->
+                <div class="max-h-[220px] overflow-y-auto scroll-smooth divide-y divide-slate-100" id="bill-list-container">
+                    <div id="empty-row" class="py-8 text-center text-slate-400 text-xs">
+                        <span class="text-2xl block mb-1">📄</span>
+                        ບໍ່ທັນມີລາຍການເທື່ອ, ລອງປ້ອນເລກຂ້າງເທິງ
+                    </div>
+                </div>
+
+                <!-- Totals & Main Actions -->
+                <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400">ຍອດລວມທັງໝົດ:</span>
+                        <span id="grand-total" class="text-2xl font-extrabold text-indigo-600">0 LAK</span>
+                    </div>
+                    <div class="grid grid-cols-12 gap-2">
+                        <button onclick="clearBill()" class="col-span-4 bg-slate-100 text-slate-500 font-bold py-3 rounded-xl text-xs">
+                            🗑️ ລຶບທັງໝົດ
+                        </button>
+                        <button onclick="checkout()" class="col-span-8 bg-green-600 text-white font-bold py-3 rounded-xl text-sm shadow-sm flex justify-center items-center space-x-1">
+                            <span>🖨️ ຢືນຢັນ & ອອກບິນ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ------------------------------------ -->
+        <!-- 2. TAB: ລາຍງານ (REPORT VIEW) -->
+        <!-- ------------------------------------ -->
+        <main id="view-report" class="hidden flex-1 p-4 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-xl text-white shadow-sm">
+                    <span class="text-[10px] font-semibold text-emerald-100 block">ຍອດຂາຍມື້ນີ້</span>
+                    <span id="report-today-sales" class="text-lg font-black block mt-1">0 LAK</span>
+                </div>
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 rounded-xl text-white shadow-sm">
+                    <span class="text-[10px] font-semibold text-indigo-100 block">ຍອດຂາຍອາທິດນີ້</span>
+                    <span class="text-lg font-black block mt-1">12,500,000 LAK</span>
                 </div>
             </div>
 
-            <!-- Toggle Auto-Reverse (ກັບເລກ) -->
-            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl text-xs">
-                <span class="font-semibold text-slate-500">🔄 ຕ້ອງການ "ກັບເລກ" (Auto Reverse)</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="check-reverse" class="sr-only peer">
-                    <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                </label>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <h3 class="font-bold text-sm text-slate-800 mb-3 flex justify-between">
+                    <span>📊 ຕົວເລກຂາຍດີມື້ນີ້</span>
+                </h3>
+                <div class="max-h-[200px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
+                            <tr>
+                                <th class="p-2.5 text-center">ອັນດັບ</th>
+                                <th class="p-2.5">ເລກ</th>
+                                <th class="p-2.5 text-right">ຍອດຂາຍ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-sales-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700">
+                            <tr id="report-empty-row">
+                                <td colspan="3" class="py-8 text-center text-slate-400">ຍັງບໍ່ມີຂໍ້ມູນການຂາຍ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Add Button -->
-            <button onclick="addItem()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center space-x-2 text-base">
-                <span>➕ ເພີ່ມລົງບິນ</span>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <h3 class="font-bold text-sm text-slate-800 mb-3">🚫 ສະຖານະເລກອັ້ນ & ເລກເຕັມ</h3>
+                <div class="max-h-[200px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
+                            <tr>
+                                <th class="p-2.5">ເລກ</th>
+                                <th class="p-2.5 text-right">ວົງເງິນອັ້ນ</th>
+                                <th class="p-2.5 text-right">ຂາຍແລ້ວ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-limit-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- ------------------------------------ -->
+        <!-- 3. TAB: ຕັ້ງຄ່າເລກອັ້ນ (CONFIG VIEW) -->
+        <!-- ------------------------------------ -->
+        <main id="view-config" class="hidden flex-1 p-4 space-y-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-4">
+                <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1">
+                    <span>⚙️</span> ຕັ້ງຄ່າ ເລກອັ້ນ / ງົດຂາຍ (Admin)
+                </h3>
+                
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" id="limit-number" placeholder="ເລກ" maxlength="3" pattern="[0-9]*" inputmode="numeric"
+                           class="border border-slate-200 rounded-xl p-3 text-center font-bold text-indigo-600 focus:outline-none bg-slate-50 text-sm">
+                    <input type="number" id="limit-max-amount" placeholder="ວົງເງິນ" pattern="[0-9]*" inputmode="numeric"
+                           class="border border-slate-200 rounded-xl p-3 text-center font-bold text-slate-700 focus:outline-none bg-slate-50 text-sm">
+                    <button onclick="addLimitRule()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs">
+                        + ເພີ່ມກົດ
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <h3 class="font-bold text-sm text-slate-800 mb-3">ລາຍການກົດເກນທີ່ຕັ້ງໄວ້</h3>
+                <div class="max-h-[300px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
+                            <tr>
+                                <th class="p-2.5 text-center">ເລກ</th>
+                                <th class="p-2.5 text-right">ວົງເງິນ</th>
+                                <th class="p-2.5 text-center">ຈັດການ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="limit-config-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- ------------------------------------ -->
+        <!-- BOTTOM NAVIGATION BAR (ແຖບເມນູລຸ່ມ) -->
+        <!-- ------------------------------------ -->
+        <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 h-16 shadow-lg z-50 flex justify-around items-center">
+            <!-- ປຸ່ມໜ້າຂາຍ -->
+            <button id="nav-pos" onclick="switchTab('pos')" class="flex flex-col items-center justify-center w-full h-full text-indigo-600 transition-all">
+                <span class="text-xl">🛒</span>
+                <span class="text-[10px] font-bold mt-0.5">ໜ້າຂາຍ (POS)</span>
             </button>
-        </div>
-
-        <!-- Current Bill list -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-sm text-slate-800">ລາຍການໃນບິນປັດຈຸບັນ</h3>
-                <span id="bill-count" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">0 ລາຍການ</span>
-            </div>
-
-            <!-- Scrollable list in Mobile -->
-            <div class="max-h-[220px] overflow-y-auto scroll-smooth divide-y divide-slate-100" id="bill-list-container">
-                <div id="empty-row" class="py-8 text-center text-slate-400 text-xs">
-                    <span class="text-2xl block mb-1">📄</span>
-                    ບໍ່ທັນມີລາຍການເທື່ອ, ລອງປ້ອນເລກຂ້າງເທິງ
-                </div>
-            </div>
-
-            <!-- Totals & Main Actions -->
-            <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400">ຍອດລວມທັງໝົດ:</span>
-                    <span id="grand-total" class="text-2xl font-extrabold text-indigo-600">0 LAK</span>
-                </div>
-                <div class="grid grid-cols-12 gap-2">
-                    <button onclick="clearBill()" class="col-span-4 bg-slate-100 text-slate-500 font-bold py-3 rounded-xl text-xs">
-                        🗑️ ລຶບທັງໝົດ
-                    </button>
-                    <button onclick="checkout()" class="col-span-8 bg-green-600 text-white font-bold py-3 rounded-xl text-sm shadow-sm flex justify-center items-center space-x-1">
-                        <span>🖨️ ຢືນຢັນ & ອອກບິນ</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </main>
+            <!-- ປຸ່ມໜ້າລາຍງານ (Admin Only) -->
+            <button id="nav-report" onclick="switchTab('report')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
+                <span class="text-xl">📊</span>
+                <span class="text-[10px] font-bold mt-0.5">ລາຍງານ</span>
+            </button>
+            <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ (Admin Only) -->
+            <button id="nav-config" onclick="switchTab('config')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
+                <span class="text-xl">⚙️</span>
+                <span class="text-[10px] font-bold mt-0.5">ຕັ້ງຄ່າເລກອັ້ນ</span>
+            </button>
+        </nav>
+    </div>
 
     <!-- ------------------------------------ -->
-    <!-- 2. TAB: ລາຍງານ (REPORT VIEW) -->
-    <!-- ------------------------------------ -->
-    <main id="view-report" class="hidden flex-1 p-4 space-y-4">
-        
-        <!-- Summary Dashboard Cards -->
-        <div class="grid grid-cols-2 gap-3">
-            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-xl text-white shadow-sm">
-                <span class="text-[10px] font-semibold text-emerald-100 block">ຍອດຂາຍມື້ນີ້</span>
-                <span id="report-today-sales" class="text-lg font-black block mt-1">0 LAK</span>
-            </div>
-            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 rounded-xl text-white shadow-sm">
-                <span class="text-[10px] font-semibold text-indigo-100 block">ຍອດຂາຍອາທິດນີ້</span>
-                <span class="text-lg font-black block mt-1">12,500,000 LAK</span>
-            </div>
-        </div>
-
-        <!-- Sales detail table -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <h3 class="font-bold text-sm text-slate-800 mb-3 flex justify-between">
-                <span>📊 ຕົວເລກຂາຍດີມື້ນີ້</span>
-                <span class="text-xs font-normal text-slate-400">ລຽງຕາມຍອດຂາຍ</span>
-            </h3>
-            <div class="max-h-[200px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
-                        <tr>
-                            <th class="p-2.5 text-center">ອັນດັບ</th>
-                            <th class="p-2.5">ເລກ</th>
-                            <th class="p-2.5 text-right">ຍອດຂາຍ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="report-sales-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700">
-                        <tr id="report-empty-row">
-                            <td colspan="3" class="py-8 text-center text-slate-400">ຍັງບໍ່ມີຂໍ້ມູນການຂາຍ</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Limits Detail table -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <h3 class="font-bold text-sm text-slate-800 mb-3">
-                <span>🚫 ສະຖານະເລກອັ້ນ & ເລກເຕັມ</span>
-            </h3>
-            <div class="max-h-[200px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
-                        <tr>
-                            <th class="p-2.5">ເລກ</th>
-                            <th class="p-2.5 text-right">ວົງເງິນອັ້ນ</th>
-                            <th class="p-2.5 text-right">ຂາຍແລ້ວ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="report-limit-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700">
-                        <!-- Limits display -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- ------------------------------------ -->
-    <!-- 3. TAB: ຕັ້ງຄ່າເລກອັ້ນ (CONFIG VIEW) -->
-    <!-- ------------------------------------ -->
-    <main id="view-config" class="hidden flex-1 p-4 space-y-4">
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-4">
-            <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1">
-                <span>⚙️</span> ຕັ້ງຄ່າ ເລກອັ້ນ / ງົດຂາຍ (Admin)
-            </h3>
-            
-            <div class="grid grid-cols-3 gap-2">
-                <input type="text" id="limit-number" placeholder="ເລກ" maxlength="3" pattern="[0-9]*" inputmode="numeric"
-                       class="border border-slate-200 rounded-xl p-3 text-center font-bold text-indigo-600 focus:outline-none bg-slate-50 text-sm">
-                <input type="number" id="limit-max-amount" placeholder="ວົງເງິນ" pattern="[0-9]*" inputmode="numeric"
-                       class="border border-slate-200 rounded-xl p-3 text-center font-bold text-slate-700 focus:outline-none bg-slate-50 text-sm">
-                <button onclick="addLimitRule()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs">
-                    + ເພີ່ມກົດ
-                </button>
-            </div>
-            <p class="text-[10px] text-slate-400">* ໃສ່ວົງເງິນ 0 ໝາຍເຖິງ "ງົດຂາຍເລກນີ້ 100%".</p>
-        </div>
-
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <h3 class="font-bold text-sm text-slate-800 mb-3">ລາຍການກົດເກນທີ່ຕັ້ງໄວ້</h3>
-            <div class="max-h-[300px] overflow-y-auto scroll-smooth rounded-xl border border-slate-100">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 font-bold sticky top-0 text-slate-500">
-                        <tr>
-                            <th class="p-2.5 text-center">ເລກ</th>
-                            <th class="p-2.5 text-right">ວົງເງິນ</th>
-                            <th class="p-2.5 text-center">ຈັດການ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="limit-config-tbody" class="divide-y divide-slate-100 font-semibold text-slate-700">
-                        <!-- Config table rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- ------------------------------------ -->
-    <!-- BOTTOM NAVIGATION BAR (ແຖບເມນູລຸ່ມ) -->
-    <!-- ------------------------------------ -->
-    <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 h-16 shadow-lg z-50 flex justify-around items-center">
-        <!-- ປຸ່ມໜ້າຂາຍ -->
-        <button id="nav-pos" onclick="switchTab('pos')" class="flex flex-col items-center justify-center w-full h-full text-indigo-600 transition-all">
-            <span class="text-xl">🛒</span>
-            <span class="text-[10px] font-bold mt-0.5">ໜ້າຂາຍ (POS)</span>
-        </button>
-        <!-- ປຸ່ມໜ້າລາຍງານ (Admin Only) -->
-        <button id="nav-report" onclick="switchTab('report')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
-            <span class="text-xl">📊</span>
-            <span class="text-[10px] font-bold mt-0.5">ລາຍງານ</span>
-        </button>
-        <!-- ປຸ່ມໜ້າຕັ້ງຄ່າ (Admin Only) -->
-        <button id="nav-config" onclick="switchTab('config')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-all">
-            <span class="text-xl">⚙️</span>
-            <span class="text-[10px] font-bold mt-0.5">ຕັ້ງຄ່າເລກອັ້ນ</span>
-        </button>
-    </nav>
-
-    <!-- ------------------------------------ -->
-    <!-- JAVASCRIPT: APPLICATION LOGIC -->
+    <!-- JAVASCRIPT: APPS LOGIC WITH LOGIN GUARD -->
     <!-- ------------------------------------ -->
     <script>
-        // --- AUTH & STATE MANAGEMENT ---
-        let currentUserRole = null; // 'admin' ຫຼື 'visitor'
-        let currentType = '2'; 
+        // --- DATA STATE ---
+        let currentUserRole = ''; // 'admin' ຫຼື 'user'
+        let currentType = '2';
         let billItems = [];
         let systemSalesToday = 0;
         let accumulatedSales = {}; 
@@ -319,75 +300,75 @@
         const amountInput = document.getElementById('input-amount');
         const reverseCheckbox = document.getElementById('check-reverse');
 
-        // --- LOGIN LOGIC ---
+        // --- ລະບົບ LOGIN & LOGOUT ---
         function handleLogin() {
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-            const errorEl = document.getElementById('login-error');
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const errorMsg = document.getElementById('login-error');
 
-            if (u === 'admin' && p === '12345') {
+            // 1. ກວດສອບເງື່ອນໄຂ Login
+            if (user === 'admin' && pass === '12345') {
                 currentUserRole = 'admin';
-                errorEl.classList.add('hidden');
-                setupUIAccess();
-                document.getElementById('view-login').classList.add('hidden'); // ປິດໜ້າ Login
-                switchTab('pos');
+            } else if (user === 'user' && pass === '12345') {
+                currentUserRole = 'user';
             } else {
-                errorEl.classList.remove('hidden');
+                errorMsg.classList.remove('hidden');
+                return;
             }
-        }
 
-        function handleVisitorLogin() {
-            currentUserRole = 'visitor';
-            document.getElementById('login-error').classList.add('hidden');
-            setupUIAccess();
-            document.getElementById('view-login').classList.add('hidden'); // ປິດໜ້າ Login
+            // 2. ເຂົ້າສູ່ລະບົບສຳເລັດ
+            errorMsg.classList.add('hidden');
+            document.getElementById('screen-login').classList.add('hidden'); // ຊ້ອນໜ້າ login
+            document.getElementById('app-container').classList.remove('hidden'); // ສະແດງແອັບ
+            document.getElementById('display-username').innerText = `${user.toUpperCase()} (${currentUserRole.toUpperCase()})`;
+
+            // 3. ນຳໃຊ້ Role-based Permission (ການກຳນົດສິດທິຜູ້ໃຊ້)
+            applyRolePermissions();
+            
+            // 4. Reset state & focus
+            clearInputs();
             switchTab('pos');
         }
 
         function handleLogout() {
-            currentUserRole = null;
-            document.getElementById('login-username').value = "";
-            document.getElementById('login-password').value = "";
-            document.getElementById('view-login').classList.remove('hidden'); // ເປີດໜ້າ Login ຄືນ
+            currentUserRole = '';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('screen-login').classList.remove('hidden'); // ເປີດໜ້າ login ຄືນ
+            document.getElementById('app-container').classList.add('hidden'); // ຊ້ອນແອັບ
         }
 
-        // --- ROLE ACCESSIBILITY CONTROL ---
-        function setupUIAccess() {
-            const badge = document.getElementById('user-badge');
-            const navReportBtn = document.getElementById('nav-report');
-            const navConfigBtn = document.getElementById('nav-config');
-            const alertViewAllBtn = document.getElementById('alert-view-all-btn');
+        // ຈັດການສິດທິການເຂົ້າເຖິງຂອງແຕ່ລະ Role
+        function applyRolePermissions() {
+            const navReport = document.getElementById('nav-report');
+            const navConfig = document.getElementById('nav-config');
+            const alertLink = document.getElementById('pos-alert-link');
 
-            if (currentUserRole === 'admin') {
-                badge.innerText = "ສິດ: Admin";
-                badge.className = "bg-emerald-600 text-[10px] px-2.5 py-1 rounded-full font-semibold";
-                
-                // ສະແດງເມນູທັງໝົດສຳລັບ Admin
-                navReportBtn.style.display = 'flex';
-                navConfigBtn.style.display = 'flex';
-                alertViewAllBtn.style.display = 'inline-block';
+            if (currentUserRole === 'user') {
+                // ຖ້າເປັນ user ປົກກະຕິ: ຊ້ອນປຸ່ມລາຍງານ ແລະ ປຸ່ມຕັ້ງຄ່າເລກອັ້ນ
+                navReport.classList.add('hidden');
+                navConfig.classList.add('hidden');
+                alertLink.classList.add('hidden'); // ບໍ່ໃຫ້ກົດໄປເບິ່ງລາຍງານເລກອັ້ນໄດ້
             } else {
-                badge.innerText = "ສິດ: Visitor";
-                badge.className = "bg-slate-500 text-[10px] px-2.5 py-1 rounded-full font-semibold";
-
-                // ເຊື່ອງເມນູສະເພາະ Admin ບໍ່ໃຫ້ Visitor ເຫັນ
-                navReportBtn.style.display = 'none';
-                navConfigBtn.style.display = 'none';
-                alertViewAllBtn.style.display = 'none';
+                // ຖ້າເປັນ admin: ສະແດງທຸກປຸ່ມ
+                navReport.classList.remove('hidden');
+                navConfig.classList.remove('hidden');
+                alertLink.classList.remove('hidden');
             }
+        }
 
-            // ລ້າງຂໍ້ມູນເກົ່າໃນຟອມ
-            numInput.value = "";
-            amountInput.value = "";
+        function clearInputs() {
+            numInput.value = '';
+            amountInput.value = '';
             billItems = [];
             renderBillList();
         }
 
         // --- TAB NAVIGATION (BOTTOM BAR) ---
         function switchTab(tab) {
-            // ປ້ອງກັນບໍ່ໃຫ້ Visitor ກົດເຂົ້າໜ້າລາຍງານ ແລະ ຕັ້ງຄ່າຜ່ານວິທີອື່ນໆ
-            if (currentUserRole !== 'admin' && (tab === 'report' || tab === 'config')) {
-                alert('⚠️ ສິດທິການເຂົ້າເຖິງສະເພາະ Admin ເທົ່ານັ້ນ!');
+            // ກັນໄວ້ອີກຊັ້ນ: ຖ້າ user ພະຍາຍາມກົດໄປໜ້າອື່ນທີ່ບໍ່ແມ່ນ pos ຜ່ານ console
+            if (currentUserRole === 'user' && tab !== 'pos') {
+                alert('🚫 ທ່ານບໍ່ມີສິດເຂົ້າເຖິງໜ້ານີ້!');
                 return;
             }
 
@@ -442,7 +423,7 @@
             numInput.focus();
         }
 
-        // Auto move cursor to Amount
+        // Auto move cursor
         numInput.addEventListener('input', () => {
             numInput.value = numInput.value.replace(/[^0-9]/g, '');
             if (numInput.value.length === parseInt(numInput.maxLength)) {
@@ -529,7 +510,6 @@
             }
         }
 
-        // Render Mobile List format
         function renderBillList() {
             const container = document.getElementById('bill-list-container');
             const empty = document.getElementById('empty-row');
