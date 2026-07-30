@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Asset & Helpdesk System (With Quotation Generator)</title>
+    <title>Smart Asset & Helpdesk System (With Financial & Asset Reports)</title>
     <!-- Libraries External -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -21,6 +21,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --purple: #8b5cf6;
+            --teal: #0d9488;
         }
 
         * {
@@ -37,7 +38,7 @@
         }
 
         .app-container {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
         }
 
@@ -54,8 +55,8 @@
         .tab-btn {
             background: none;
             border: none;
-            padding: 10px 18px;
-            font-size: 14px;
+            padding: 10px 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
@@ -80,7 +81,7 @@
         /* Metrics */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }
@@ -100,7 +101,7 @@
         }
 
         .metric-card h3 {
-            font-size: 22px;
+            font-size: 20px;
             color: var(--text);
         }
 
@@ -172,6 +173,7 @@
         .badge-approved { background: #dbeafe; color: #1e40af; }
         .badge-completed { background: #d1fae5; color: #065f46; }
         .badge-rejected { background: #fee2e2; color: #991b1b; }
+        .badge-assigned { background: #ccfbf1; color: #115e59; }
         .badge-urgent { background: #fee2e2; color: #991b1b; }
         .badge-medium { background: #e0e7ff; color: #3730a3; }
         .badge-low { background: #f3f4f6; color: #4b5563; }
@@ -220,6 +222,8 @@
         .btn-danger:hover { background: #dc2626; }
         .btn-purple { background: var(--purple); color: white; }
         .btn-purple:hover { background: #7c3aed; }
+        .btn-teal { background: var(--teal); color: white; }
+        .btn-teal:hover { background: #0f766e; }
         .btn-stop { background: var(--danger); }
 
         /* QR Scanner & Generator UI */
@@ -289,15 +293,17 @@
 
 <div class="app-container">
     <h2>🛠️ Smart Asset & Helpdesk System</h2>
-    <p style="color: var(--text-muted); margin-bottom: 20px;">ระบบจัดการทรัพย์สิน แจ้งซ่อม และออกใบเสนอราคาค่าใช้จ่ายช่างภายนอก</p>
+    <p style="color: var(--text-muted); margin-bottom: 20px;">ระบบจัดการทรัพย์สิน งานซ่อมภายใน ช่างภายนอก ใบเสนอราคา และรายงานสรุปการเงิน</p>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('dashboard')">📊 1. Dashboard ผู้บริหาร</button>
-        <button class="tab-btn" onclick="switchTab('employee')">📱 2. สแกนแจ้งซ่อม (พนักงาน)</button>
-        <button class="tab-btn" onclick="switchTab('vendor-management')">💼 3. จัดการสถานะ & อนุมัติ</button>
-        <button class="tab-btn" onclick="switchTab('quotation-maker')">📄 4. สร้าง & พิมพ์ใบเสนอราคา</button>
-        <button class="tab-btn" onclick="switchTab('admin-asset')">📝 5. ลงทะเบียน QR Code</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard')">📊 1. Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('employee')">📱 2. สแกนแจ้งซ่อม</button>
+        <button class="tab-btn" onclick="switchTab('internal-team')">🏢 3. ช่างภายใน</button>
+        <button class="tab-btn" onclick="switchTab('vendor-management')">💼 4. ช่างนอก & CEO</button>
+        <button class="tab-btn" onclick="switchTab('quotation-maker')">📄 5. พิมพ์ใบเสนอราคา</button>
+        <button class="tab-btn" onclick="switchTab('reports')">📈 6. รายงาน 6 เดือน/ปี</button>
+        <button class="tab-btn" onclick="switchTab('admin-asset')">📝 7. ลงทะเบียน QR</button>
     </div>
 
     <!-- TAB 1: EXECUTIVE DASHBOARD -->
@@ -308,27 +314,27 @@
                 <h3 id="stat-total">0 รายการ</h3>
             </div>
             <div class="metric-card">
-                <p>รอดำเนินการ (Pending)</p>
-                <h3 id="stat-pending" style="color: var(--warning);">0 รายการ </h3>
+                <p>รอดำเนินการ</p>
+                <h3 id="stat-pending" style="color: var(--warning);">0 รายการ</h3>
             </div>
             <div class="metric-card">
-                <p>รอ CEO ออนุมัติงบ</p>
+                <p>ช่างภายในดูแล</p>
+                <h3 id="stat-internal" style="color: var(--teal);">0 รายการ</h3>
+            </div>
+            <div class="metric-card">
+                <p>รอ CEO อนุมัติงบ</p>
                 <h3 id="stat-ceo" style="color: var(--purple);">0 รายการ</h3>
             </div>
             <div class="metric-card">
-                <p>กำลังซ่อม / รออะไหล่</p>
-                <h3 id="stat-progress" style="color: var(--primary);">0 รายการ</h3>
-            </div>
-            <div class="metric-card">
-                <p>ซ่อมเสร็จสิ้น</p>
-                <h3 id="stat-completed" style="color: var(--success);">0 รายการ</h3>
+                <p>งบประมาณรวมซ่อม</p>
+                <h3 id="stat-cost" style="color: var(--danger);">0 ฿</h3>
             </div>
         </div>
 
         <div class="main-grid">
             <div class="card">
                 <div class="card-title">
-                    <span>สถานะงานซ่อมและใบเสนอราคาล่าสุด</span>
+                    <span>สถานะงานซ่อมภาพรวม</span>
                     <span class="badge badge-progress">Real-time Data</span>
                 </div>
                 <table>
@@ -336,8 +342,8 @@
                         <tr>
                             <th>Ticket No.</th>
                             <th>อุปกรณ์</th>
-                            <th>อาการ/ช่างนอก</th>
-                            <th>งบประมาณ (บาท)</th>
+                            <th>อาการ</th>
+                            <th>ผู้รับผิดชอบ</th>
                             <th>สถานะ</th>
                         </tr>
                     </thead>
@@ -379,13 +385,13 @@
                     </div>
                     <div class="form-group">
                         <label>อาการที่พบ / ปัญหา *</label>
-                        <input type="text" id="ticket-title" placeholder="เช่น แอร์มีแต่ลมร้อน, ปริ้นเตอร์กระดาษติด" required>
+                        <input type="text" id="ticket-title" placeholder="เช่น โปรแกรมค้าง, ปริ้นเตอร์หมึกหมด" required>
                     </div>
                     <div class="form-group">
                         <label>ระดับความเร่งด่วน</label>
                         <select id="ticket-priority">
-                            <option value="Low">Low (ซ่อมได้ตามคิวปกติ)</option>
-                            <option value="Medium" selected>Medium (กระทบการทำงานเล็กน้อย)</option>
+                            <option value="Low">Low (ซ่อมตามคิวปกติ)</option>
+                            <option value="Medium" selected>Medium (กระทบเล็กน้อย)</option>
                             <option value="Urgent">Urgent (กระทบงานสำคัญมาก)</option>
                         </select>
                     </div>
@@ -395,23 +401,33 @@
         </div>
     </div>
 
-    <!-- TAB 3: VENDOR MANAGEMENT & APPROVAL -->
+    <!-- TAB 3: INTERNAL MAINTENANCE TEAM -->
+    <div id="internal-team" class="tab-content">
+        <div class="card">
+            <div class="card-title">🏢 ทีมช่างภายในองค์กร (Internal Tech Team)</div>
+            <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 13px;">
+                จัดการและมอบหมายงานแจ้งซ่อมให้ช่างประจำภายในองค์กร
+            </p>
+            <div id="internal-task-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: EXTERNAL VENDOR & APPROVAL -->
     <div id="vendor-management" class="tab-content">
         <div class="card">
-            <div class="card-title">💼 จัดการงานซ่อม และการอนุมัติงบประมาณ</div>
+            <div class="card-title">💼 ทีมช่างภายนอก & การอนุมัติงบจาก CEO</div>
             <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 13px;">
-                ตรวจสอบรายละเอียดงานแจ้งซ่อม และดำเนินการส่งขออนุมัติหรืออัปเดตสถานะงานช่างภายนอก
+                สำหรับเคสที่เกินกำลังช่างภายใน ต้องจ้างบริษัทภายนอก ทำการกรอกใบเสนอราคาและรอ CEO ออนุมัติงบ
             </p>
             <div id="vendor-task-list"></div>
         </div>
     </div>
 
-    <!-- TAB 4: QUOTATION MAKER & PRINT VIEW -->
+    <!-- TAB 5: QUOTATION MAKER & PRINT VIEW -->
     <div id="quotation-maker" class="tab-content">
         <div class="two-col no-print">
-            <!-- Form Input -->
             <div class="card">
-                <div class="card-title">📝 กรอกรายละเอียดใบเสนอราคา (Quotation)</div>
+                <div class="card-title">📝 กรอกรายละเอียดใบเสนอราคา</div>
                 <div class="form-group">
                     <label>เลือก Ticket ที่เกี่ยวข้อง</label>
                     <select id="q-ticket-select" onchange="populateQuotationFromTicket()">
@@ -420,7 +436,7 @@
                 </div>
                 <div class="form-group">
                     <label>ชื่อบริษัทผู้ให้บริการ / ช่างภายนอก *</label>
-                    <input type="text" id="q-vendor" placeholder="เช่น บริษัท แอร์ดี จำกัด" value="บริษัท แอร์ดี จำกัด">
+                    <input type="text" id="q-vendor" value="บริษัท แอร์ดี จำกัด">
                 </div>
                 <div class="two-col" style="margin-bottom: 0;">
                     <div class="form-group">
@@ -432,13 +448,10 @@
                         <input type="date" id="q-date">
                     </div>
                 </div>
-
                 <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border);">
-                
-                <h4 style="font-size: 14px; margin-bottom: 10px;">รายการสินค้า / ค่าบริการ</h4>
                 <div class="form-group">
-                    <label>ชื่อรายการ / อะไหล่</label>
-                    <input type="text" id="item-desc" placeholder="เช่น ค่าเปลี่ยนคอมเพรสเซอร์แอร์ 12000 BTU">
+                    <label>รายการสินค้า / ค่าบริการ</label>
+                    <input type="text" id="item-desc" placeholder="เช่น ค่าเปลี่ยนคอมเพรสเซอร์แอร์">
                 </div>
                 <div class="two-col">
                     <div class="form-group">
@@ -453,12 +466,11 @@
                 <button class="btn btn-purple" onclick="previewQuotation()">🔄 อัปเดตพรีวิวเอกสาร</button>
             </div>
 
-            <!-- Print Actions -->
             <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div class="card-title">🖨️ พิมพ์หรือบันทึกเอกสาร</div>
+                    <div class="card-title">🖨️ พิมพ์เอกสาร</div>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-                        คุณสามารถตรวจสอบรูปแบบใบเสนอราคาทางด้านขวา หากข้อมูลถูกต้องครบถ้วนแล้ว สามารถกดปุ่มพิมพ์ออกเป็นเอกสารกระดาษหรือบันทึกเป็น PDF ได้ทันที
+                        ตรวจสอบรูปแบบใบเสนอราคาทางด้านขวา หากถูกต้องแล้วสามารถกดพิมพ์ออกเป็นกระดาษหรือ PDF ได้ทันที
                     </p>
                 </div>
                 <button class="btn btn-success" onclick="window.print()" style="padding: 15px; font-size: 16px;">
@@ -467,29 +479,23 @@
             </div>
         </div>
 
-        <!-- Printable Document Output Container -->
         <div id="printable-quotation" class="quotation-paper">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
                 <div>
                     <h2 id="p-vendor-name" style="color: var(--primary); font-size: 20px; margin-bottom: 5px;">บริษัท แอร์ดี จำกัด</h2>
                     <p style="font-size: 12px; color: var(--text-muted);">123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110</p>
-                    <p style="font-size: 12px; color: var(--text-muted);">เลขประจำตัวผู้เสียภาษี: 010555xxxxxxx</p>
                 </div>
                 <div style="text-align: right;">
                     <h2 style="font-size: 22px; color: #334155; margin-bottom: 5px;">ใบเสนอราคา</h2>
-                    <h3 style="font-size: 14px; color: var(--text-muted);">QUOTATION</h3>
                     <p style="font-size: 13px; margin-top: 8px;"><b>เลขที่:</b> <span id="p-quotation-no">QT-2026-001</span></p>
                     <p style="font-size: 13px;"><b>วันที่:</b> <span id="p-quotation-date">-</span></p>
                 </div>
             </div>
-
             <hr style="margin-bottom: 20px; border: none; border-top: 1px solid var(--border);">
-
             <div style="margin-bottom: 25px; font-size: 13px;">
                 <p><b>นามลูกค้า:</b> บริษัท เทคโนโลยี สมาร์ท จำกัด (สำนักงานใหญ่)</p>
-                <p><b>อ้างอิงใบแจ้งซ่อม:</b> <span id="p-ref-ticket">TK-202607-001 (แอร์ห้องประชุม A)</span></p>
+                <p><b>อ้างอิงใบแจ้งซ่อม:</b> <span id="p-ref-ticket">-</span></p>
             </div>
-
             <table>
                 <thead>
                     <tr>
@@ -503,47 +509,80 @@
                 <tbody id="p-table-items">
                     <tr>
                         <td>1</td>
-                        <td id="p-item-desc">ค่าเปลี่ยนคอมเพรสเซอร์แอร์ 12000 BTU</td>
+                        <td id="p-item-desc">-</td>
                         <td id="p-item-qty" style="text-align: center;">1</td>
-                        <td id="p-item-price" style="text-align: right;">4,500.00</td>
-                        <td id="p-item-total" style="text-align: right;">4,500.00</td>
+                        <td id="p-item-price" style="text-align: right;">0.00</td>
+                        <td id="p-item-total" style="text-align: right;">0.00</td>
                     </tr>
                 </tbody>
             </table>
-
             <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
                 <div style="width: 300px; font-size: 14px;">
                     <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border);">
-                        <span>1. รวมเป็นเงิน:</span>
-                        <span id="p-subtotal">4,500.00 ฿</span>
+                        <span>รวมเป็นเงิน:</span>
+                        <span id="p-subtotal">0.00 ฿</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border);">
-                        <span>2. ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
-                        <span id="p-vat">315.00 ฿</span>
+                        <span>ภาษีมูลค่าเพิ่ม (7%):</span>
+                        <span id="p-vat">0.00 ฿</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 10px 0; font-weight: bold; font-size: 16px; color: var(--primary);">
                         <span>ยอดรวมทั้งสิ้น:</span>
-                        <span id="p-grandtotal">4,815.00 ฿</span>
+                        <span id="p-grandtotal">0.00 ฿</span>
                     </div>
-                </div>
-            </div>
-
-            <div style="margin-top: 60px; display: flex; justify-content: space-between; font-size: 13px; text-align: center;">
-                <div>
-                    <p style="margin-bottom: 40px;">___________________________________</p>
-                    <p><b>ผู้เสนอราคา (Vendor)</b></p>
-                    <p>วันที่ ____/____/________</p>
-                </div>
-                <div>
-                    <p style="margin-bottom: 40px;">___________________________________</p>
-                    <p><b>ผู้อนุมัติงบประมาณ (CEO / Admin)</b></p>
-                    <p>วันที่ ____/____/________</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 5: ADMIN ASSET REGISTRATION & QR GENERATOR -->
+    <!-- TAB 6: REPORTS (SEMI-ANNUAL & YEARLY FINANCIAL & REPAIR STATS) -->
+    <div id="reports" class="tab-content">
+        <div class="card">
+            <div class="card-title">
+                <span>📈 รายงานสรุปสถิติการซ่อมและค่าใช้จ่าย (Periodic Reports)</span>
+                <div>
+                    <select id="report-filter" onchange="renderReports()" style="padding: 6px 12px; font-size: 13px;">
+                        <option value="h1">รอบ 6 เดือนแรก (มกราคม - มิถุนายน)</option>
+                        <option value="h2">รอบ 6 เดือนหลัง (กรกฎาคม - ธันวาคม)</option>
+                        <option value="yearly" selected>รายงานประจำปี (Yearly Summary)</option>
+                    </select>
+                </div>
+            </div>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                วิเคราะห์อุปกรณ์ที่มีอัตราการส่งซ่อมสูงสุด พร้อมสรุปยอดค่าใช้จ่ายทางการเงิน งบประมาณที่ใช้ไปทั้งหมดในรอบระยะเวลานั้น ๆ
+            </p>
+
+            <div class="metrics-grid" style="margin-bottom: 20px;">
+                <div class="metric-card" style="background: #eff6ff;">
+                    <p>งบประมาณค่าซ่อมรวม</p>
+                    <h3 id="rep-total-cost" style="color: var(--primary);">0 ฿</h3>
+                </div>
+                <div class="metric-card" style="background: #fdf2f8;">
+                    <p>จำนวนเคสซ่อมทั้งหมด</p>
+                    <h3 id="rep-total-cases" style="color: #db2777;">0 เคส</h3>
+                </div>
+                <div class="metric-card" style="background: #f0fdf4;">
+                    <p>อุปกรณ์ที่ส่งซ่อมสูงสุด</p>
+                    <h3 id="rep-top-asset" style="color: var(--success); font-size: 16px;">-</h3>
+                </div>
+            </div>
+
+            <h4 style="font-size: 15px; margin-bottom: 10px;">📊 สถิติอุปกรณ์ที่ส่งซ่อมบ่อยที่สุด (จัดอันดับตามจำนวนครั้ง)</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>อันดับ</th>
+                        <th>รหัสอุปกรณ์ / ชื่ออุปกรณ์</th>
+                        <th style="text-align: center;">จำนวนครั้งที่ซ่อม</th>
+                        <th style="text-align: right;">ค่าใช้จ่ายสะสม (บาท)</th>
+                    </tr>
+                </thead>
+                <tbody id="report-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 7: ADMIN ASSET REGISTRATION & QR GENERATOR -->
     <div id="admin-asset" class="tab-content">
         <div class="two-col">
             <div class="card">
@@ -588,7 +627,6 @@
 </div>
 
 <script>
-    // Global In-Memory Database
     let assetsDatabase = {
         "AST-2026-001": { name: "แอร์ห้องประชุม A", location: "ชั้น 3 อาคาร B" },
         "AST-2026-045": { name: "Printer HP ฝ่ายบัญชี", location: "ชั้น 2 อาคาร A" },
@@ -599,34 +637,61 @@
         {
             id: 'TK-202607-001',
             assetCode: 'AST-2026-001',
-            assetName: 'แอร์ห้องประชุม A (ชั้น 3 อาคาร B)',
+            assetName: 'แอร์ห้องประชุม A',
             title: 'แอร์มีแต่น้ำหยด ลมไม่เย็น',
             priority: 'Urgent',
-            status: 'Pending CEO',
-            vendorName: 'บริษัท แอร์ดี จำกัด',
-            quotationDetails: 'เปลี่ยนคอมเพรสเซอร์และเติมน้ำยาแอร์',
+            handlerType: 'External',
+            status: 'Approved',
+            assignedTo: 'บริษัท แอร์ดี จำกัด',
+            quotationDetails: 'เปลี่ยนคอมเพรสเซอร์และเติมน้ำยา',
             cost: 4500,
             createdAt: '10:30 น.'
         },
         {
             id: 'TK-202607-002',
-            assetCode: 'AST-2026-045',
-            assetName: 'Printer HP ฝ่ายบัญชี (ชั้น 2 อาคาร A)',
-            title: 'พิมพ์งานแล้วเป็นเส้นดำทับข้อความ',
+            assetCode: 'AST-2026-089',
+            assetName: 'คอมพิวเตอร์ Graphic 02',
+            title: 'เปิดเครื่องไม่ติด จอฟ้า',
             priority: 'Medium',
-            status: 'In Progress',
-            vendorName: 'ร้าน ไอที เซอร์วิส',
-            quotationDetails: 'เปลี่ยนชุดลูกกลิ้งป้อนกระดาษ (Roller)',
+            handlerType: 'Internal',
+            status: 'Assigned',
+            assignedTo: 'ช่างสมชาย (IT Support)',
+            quotationDetails: '-',
+            cost: 0,
+            createdAt: '11:15 น.'
+        },
+        {
+            id: 'TK-202603-003',
+            assetCode: 'AST-2026-001',
+            assetName: 'แอร์ห้องประชุม A',
+            title: 'ล้างแอร์ประจำปีและตรวจเช็คน้ำยา',
+            priority: 'Low',
+            handlerType: 'External',
+            status: 'Completed',
+            assignedTo: 'บริษัท แอร์ดี จำกัด',
+            quotationDetails: 'ล้างแอร์ชุดใหญ่',
+            cost: 1500,
+            createdAt: '14:00 น.'
+        },
+        {
+            id: 'TK-202601-004',
+            assetCode: 'AST-2026-045',
+            assetName: 'Printer HP ฝ่ายบัญชี',
+            title: 'เปลี่ยนชุดตลับหมึกและลูกกลิ้ง',
+            priority: 'Medium',
+            handlerType: 'External',
+            status: 'Completed',
+            assignedTo: 'ร้าน ไอที เซอร์วิส',
+            quotationDetails: 'เปลี่ยนอะไหล่ลูกกลิ้งกระดาษ',
             cost: 1200,
-            createdAt: '09:15 น.'
+            createdAt: '09:00 น.'
         }
     ];
 
-    let ticketCounter = 3;
+    let ticketCounter = 5;
     let html5QrcodeScanner = null;
 
     window.onload = function() {
-        // Set default date for quotation
         document.getElementById('q-date').valueAsDate = new Date();
         renderAll();
         previewQuotation();
@@ -696,11 +761,12 @@
         const newTicket = {
             id: `TK-202607-00${ticketCounter++}`,
             assetCode: code,
-            assetName: name,
+            assetName: name.split(' (')[0],
             title: title,
             priority: priority,
+            handlerType: 'Internal',
             status: 'Pending',
-            vendorName: '-',
+            assignedTo: 'ยังไม่มอบหมาย',
             quotationDetails: '-',
             cost: 0,
             createdAt: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.'
@@ -711,11 +777,37 @@
         document.getElementById('scan-alert').style.display = 'none';
 
         renderAll();
-        alert(`ส่งแจ้งซ่อมรหัส ${newTicket.id} สำเร็จ! เจ้าหน้าที่กำลังประสานช่างนอก`);
+        alert(`ส่งแจ้งซ่อมรหัส ${newTicket.id} สำเร็จ!`);
         switchTab('dashboard');
     }
 
-    // --- VENDOR MANAGEMENT & APPROVAL ---
+    // --- INTERNAL TEAM ASSIGNMENT ---
+    function assignInternalTech(ticketId) {
+        const techName = document.getElementById(`tech-${ticketId}`).value.trim();
+        if (!techName) {
+            alert('กรุณากรอกชื่อช่างภายในองค์กร');
+            return;
+        }
+
+        const ticket = tickets.find(t => t.id === ticketId);
+        if (ticket) {
+            ticket.handlerType = 'Internal';
+            ticket.assignedTo = techName;
+            ticket.status = 'Assigned';
+            renderAll();
+            alert(`มอบหมายให้ ${techName} ดำเนินการเรียบร้อย!`);
+        }
+    }
+
+    function updateInternalStatus(ticketId, newStatus) {
+        const ticket = tickets.find(t => t.id === ticketId);
+        if (ticket) {
+            ticket.status = newStatus;
+            renderAll();
+        }
+    }
+
+    // --- EXTERNAL VENDOR & APPROVAL ---
     function updateCEOApproval(ticketId, decision) {
         const ticket = tickets.find(t => t.id === ticketId);
         if (ticket) {
@@ -750,12 +842,8 @@
         const ticket = tickets.find(t => t.id === tid);
         if (ticket) {
             document.getElementById('item-desc').value = ticket.title;
-            if (ticket.cost > 0) {
-                document.getElementById('item-price').value = ticket.cost;
-            }
-            if (ticket.vendorName !== '-') {
-                document.getElementById('q-vendor').value = ticket.vendorName;
-            }
+            if (ticket.cost > 0) document.getElementById('item-price').value = ticket.cost;
+            if (ticket.assignedTo !== '-') document.getElementById('q-vendor').value = ticket.assignedTo;
             previewQuotation();
         }
     }
@@ -767,7 +855,7 @@
         const desc = document.getElementById('item-desc').value;
         const qty = parseFloat(document.getElementById('item-qty').value) || 1;
         const price = parseFloat(document.getElementById('item-price').value) || 0;
-        const tid = document.getElementById('q-ticket-select').value || 'TK-202607-001';
+        const tid = document.getElementById('q-ticket-select').value || '-';
 
         document.getElementById('p-vendor-name').innerText = vendor;
         document.getElementById('p-quotation-no').innerText = qNo;
@@ -837,16 +925,19 @@
         renderStats();
         renderDashboardTable();
         renderAssetSummary();
+        renderInternalTasks();
         renderVendorTasks();
+        renderReports();
         populateQuotationSelect();
     }
 
     function renderStats() {
+        const totalCost = tickets.reduce((sum, t) => sum + (t.cost || 0), 0);
         document.getElementById('stat-total').innerText = `${tickets.length} รายการ`;
         document.getElementById('stat-pending').innerText = `${tickets.filter(t => t.status === 'Pending').length} รายการ`;
+        document.getElementById('stat-internal').innerText = `${tickets.filter(t => t.handlerType === 'Internal' && t.status !== 'Completed').length} รายการ`;
         document.getElementById('stat-ceo').innerText = `${tickets.filter(t => t.status === 'Pending CEO').length} รายการ`;
-        document.getElementById('stat-progress').innerText = `${tickets.filter(t => t.status === 'Approved' || t.status === 'In Progress').length} รายการ`;
-        document.getElementById('stat-completed').innerText = `${tickets.filter(t => t.status === 'Completed').length} รายการ`;
+        document.getElementById('stat-cost').innerText = `${totalCost.toLocaleString()} ฿`;
     }
 
     function renderDashboardTable() {
@@ -864,9 +955,9 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>${t.id}</b></td>
-                <td>${t.assetName}<br><small color="var(--text-muted)">${t.assetCode}</small></td>
-                <td>${t.title}<br><small style="color: var(--primary);">ช่าง: ${t.vendorName}</small></td>
-                <td><b>${t.cost > 0 ? t.cost.toLocaleString() + ' ฿' : '-'}</b></td>
+                <td>${t.assetName}<br><small style="color: var(--text-muted);">${t.assetCode}</small></td>
+                <td>${t.title}</td>
+                <td><b>${t.assignedTo}</b></td>
                 <td>${statusBadge}</td>
             `;
             tbody.appendChild(tr);
@@ -885,55 +976,40 @@
         container.innerHTML = html;
     }
 
-    function renderVendorTasks() {
-        const container = document.getElementById('vendor-task-list');
+    function renderInternalTasks() {
+        const container = document.getElementById('internal-task-list');
         container.innerHTML = '';
+        const internalTickets = tickets.filter(t => t.handlerType === 'Internal');
 
-        if (tickets.length === 0) {
-            container.innerHTML = '<div class="empty-state">ไม่มีรายการงานซ่อม</div>';
+        if (internalTickets.length === 0) {
+            container.innerHTML = '<div class="empty-state">ไม่มีงานสำหรับทีมช่างภายใน</div>';
             return;
         }
 
-        tickets.forEach(t => {
+        internalTickets.forEach(t => {
             const card = document.createElement('div');
             card.style.cssText = 'border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fff;';
 
             let actionArea = '';
-
             if (t.status === 'Pending') {
                 actionArea = `
-                    <div style="margin-top: 10px;">
-                        <p style="font-size: 13px; color: var(--warning); margin-bottom: 8px;"><b>สถานะ:</b> รอออกใบเสนอราคาเพื่อประเมินงบประมาณ</p>
-                        <button class="btn btn-sm btn-purple" onclick="switchTab('quotation-maker')">📄 ไปที่หน้าออกใบเสนอราคา</button>
-                    </div>
-                `;
-            } else if (t.status === 'Pending CEO') {
-                actionArea = `
-                    <div style="background: #fae8ff; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #d8b4fe;">
-                        <p style="font-size: 13px; margin-bottom: 5px;"><b>ช่างภายนอก:</b> ${t.vendorName} | <b>งบประมาณ:</b> <span style="color:var(--danger); font-weight:bold;">${t.cost.toLocaleString()} บาท</span></p>
-                        <p style="font-size: 13px; margin-bottom: 10px;"><b>รายละเอียด:</b> ${t.quotationDetails}</p>
+                    <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #bbf7d0;">
+                        <p style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">👨‍🔧 มอบหมายงานให้ช่างภายใน</p>
                         <div style="display: flex; gap: 10px;">
-                            <button class="btn btn-sm btn-success" onclick="updateCEOApproval('${t.id}', 'Approved')">👑 CEO ออนุมัติงบ (Approve)</button>
-                            <button class="btn btn-sm btn-danger" onclick="updateCEOApproval('${t.id}', 'Rejected')">❌ CEO ไม่อนุมัติ (Reject)</button>
+                            <input type="text" id="tech-${t.id}" placeholder="ระบุชื่อช่าง (เช่น ช่างสมชาย)" style="font-size:13px;">
+                            <button class="btn btn-sm btn-teal" onclick="assignInternalTech('${t.id}')">มอบหมาย</button>
                         </div>
                     </div>
                 `;
-            } else if (t.status === 'Approved') {
+            } else if (t.status === 'Assigned') {
                 actionArea = `
                     <div style="margin-top: 10px;">
-                        <p style="font-size: 13px; color: var(--success); font-weight: bold; margin-bottom: 8px;">👑 CEO อนุมัติงบแล้ว กำลังประสานช่างนอกเข้าดำเนินการ</p>
-                        <button class="btn btn-sm" onclick="updateTicketStatus('${t.id}', 'In Progress')">🛠️ ช่างเริ่มเข้าหน้างาน (In Progress)</button>
-                    </div>
-                `;
-            } else if (t.status === 'In Progress') {
-                actionArea = `
-                    <div style="margin-top: 10px;">
-                        <p style="font-size: 13px; color: var(--primary); font-weight: bold; margin-bottom: 8px;">🔧 ช่างกำลังปฏิบัติงานหน้างาน</p>
-                        <button class="btn btn-sm btn-success" onclick="updateTicketStatus('${t.id}', 'Completed')">✅ งานเสร็จสิ้น (Close Ticket)</button>
+                        <p style="font-size: 13px; color: var(--teal); font-weight: bold; margin-bottom: 6px;">🛠️ กำลังดำเนินการซ่อมโดย: ${t.assignedTo}</p>
+                        <button class="btn btn-sm btn-success" onclick="updateInternalStatus('${t.id}', 'Completed')">✅ เสร็จสิ้น (Close Ticket)</button>
                     </div>
                 `;
             } else {
-                actionArea = `<p style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">สถานะปัจจุบัน: <b>${t.status}</b></p>`;
+                actionArea = `<p style="font-size: 13px; margin-top: 10px; color: var(--success); font-weight: bold;">✅ ซ่อมเสร็จสิ้นเรียบร้อย</p>`;
             }
 
             let statusBadge = `<span class="badge badge-${t.status.toLowerCase().replace(/\s+/g, '')}">${t.status}</span>`;
@@ -942,18 +1018,130 @@
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <b>Ticket: ${t.id}</b>
-                    <div>
-                        ${priorityBadge}
-                        ${statusBadge}
-                    </div>
+                    <div>${priorityBadge} ${statusBadge}</div>
                 </div>
                 <p><b>อุปกรณ์:</b> ${t.assetName}</p>
                 <p><b>ปัญหา:</b> ${t.title}</p>
-                <p><small style="color: var(--text-muted);">เวลาแจ้ง: ${t.createdAt}</small></p>
                 <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
                 ${actionArea}
             `;
             container.appendChild(card);
+        });
+    }
+
+    function renderVendorTasks() {
+        const container = document.getElementById('vendor-task-list');
+        container.innerHTML = '';
+        const vendorTickets = tickets.filter(t => t.handlerType === 'External');
+
+        if (vendorTickets.length === 0) {
+            container.innerHTML = '<div class="empty-state">ไม่มีรายการที่ต้องจ้างช่างภายนอก</div>';
+            return;
+        }
+
+        vendorTickets.forEach(t => {
+            const card = document.createElement('div');
+            card.style.cssText = 'border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fff;';
+
+            let actionArea = '';
+            if (t.status === 'Pending CEO') {
+                actionArea = `
+                    <div style="background: #fae8ff; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #d8b4fe;">
+                        <p style="font-size: 13px; margin-bottom: 5px;"><b>ช่างภายนอก:</b> ${t.assignedTo} | <b>งบประมาณ:</b> <span style="color:var(--danger); font-weight:bold;">${t.cost.toLocaleString()} บาท</span></p>
+                        <p style="font-size: 13px; margin-bottom: 10px;"><b>รายละเอียด:</b> ${t.quotationDetails}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-sm btn-success" onclick="updateCEOApproval('${t.id}', 'Approved')">👑 CEO ออนุมัติ</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateCEOApproval('${t.id}', 'Rejected')">❌ ไม่อนุมัติ</button>
+                        </div>
+                    </div>
+                `;
+            } else if (t.status === 'Approved') {
+                actionArea = `
+                    <div style="margin-top: 10px;">
+                        <p style="font-size: 13px; color: var(--success); font-weight: bold; margin-bottom: 8px;">👑 CEO ออนุมัติงบแล้ว</p>
+                        <button class="btn btn-sm" onclick="updateTicketStatus('${t.id}', 'In Progress')">🛠️ ช่างเข้าหน้างาน</button>
+                    </div>
+                `;
+            } else if (t.status === 'In Progress') {
+                actionArea = `
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-sm btn-success" onclick="updateTicketStatus('${t.id}', 'Completed')">✅ งานเสร็จสิ้น</button>
+                    </div>
+                `;
+            } else {
+                actionArea = `<p style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">สถานะ: <b>${t.status}</b></p>`;
+            }
+
+            let statusBadge = `<span class="badge badge-${t.status.toLowerCase().replace(/\s+/g, '')}">${t.status}</span>`;
+
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <b>Ticket: ${t.id}</b>
+                    ${statusBadge}
+                </div>
+                <p><b>อุปกรณ์:</b> ${t.assetName}</p>
+                <p><b>ปัญหา:</b> ${t.title}</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                ${actionArea}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // --- REPORT GENERATOR LOGIC ---
+    function renderReports() {
+        const filter = document.getElementById('report-filter').value;
+        
+        // กรองข้อมูลจำลองตามช่วงเวลา (ในระบบจริงสามารถใช้เดือนในรหัส Ticket หรือ Timestamp กรองได้)
+        let filteredTickets = tickets;
+        if (filter === 'h1') {
+            filteredTickets = tickets.filter(t => t.id.includes('202601') || t.id.includes('202603'));
+        } else if (filter === 'h2') {
+            filteredTickets = tickets.filter(t => t.id.includes('202607'));
+        }
+
+        // คำนวณสถิติแยกตามอุปกรณ์
+        let assetStats = {};
+        let totalCost = 0;
+
+        filteredTickets.forEach(t => {
+            totalCost += (t.cost || 0);
+            if (!assetStats[t.assetName]) {
+                assetStats[t.assetName] = { count: 0, cost: 0, code: t.assetCode };
+            }
+            assetStats[t.assetName].count += 1;
+            assetStats[t.assetName].cost += (t.cost || 0);
+        });
+
+        // แปลงเป็น Array และเรียงลำดับตามจำนวนครั้งที่ซ่อมมากที่สุด
+        let sortedAssets = Object.entries(assetStats).sort((a, b) => b[1].count - a[1].count);
+
+        document.getElementById('rep-total-cost').innerText = totalCost.toLocaleString() + ' ฿';
+        document.getElementById('rep-total-cases').innerText = `${filteredTickets.length} เคส`;
+
+        if (sortedAssets.length > 0) {
+            document.getElementById('rep-top-asset').innerText = `${sortedAssets[0][0]} (${sortedAssets[0][1].count} ครั้ง)`;
+        } else {
+            document.getElementById('rep-top-asset').innerText = '-';
+        }
+
+        const tbody = document.getElementById('report-table-body');
+        tbody.innerHTML = '';
+
+        if (sortedAssets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state">ไม่มีข้อมูลสถิติในช่วงเวลานี้</td></tr>';
+            return;
+        }
+
+        sortedAssets.forEach(([name, data], index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>#${index + 1}</b></td>
+                <td>${name} <br><small style="color:var(--text-muted);">${data.code}</small></td>
+                <td style="text-align: center;"><span class="badge badge-urgent">${data.count} ครั้ง</span></td>
+                <td style="text-align: right; font-weight: bold; color: var(--danger);">${data.cost.toLocaleString()} ฿</td>
+            `;
+            tbody.appendChild(tr);
         });
     }
 </script>
